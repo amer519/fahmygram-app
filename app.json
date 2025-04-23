@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "private-album-starter",
-    "slug": "private-album-starter",
+    "name": "FahmyGram",
+    "slug": "fahmygram",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,7 +22,15 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "meta": {
+        "viewport": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+        "themeColor": "#ffffff",
+        "apple": {
+          "mobileWebAppCapable": "yes",
+          "statusBarStyle": "default"
+        }
+      }
     }
   }
 }
