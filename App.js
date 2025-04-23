@@ -27,9 +27,7 @@ function AppContent() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          headerBackground: () => <GradientHeader />, // ✅ gradient only as background
-          headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: '600', fontSize: 18 },
+          header: (props) => <GradientHeader {...props} />, // ✅ show gradient with back nav
         }}
       >
         {firebaseUser ? (
@@ -37,7 +35,7 @@ function AppContent() {
             <Stack.Screen
               name="Home"
               component={HomeScreen}
-              options={{ title: 'Home', headerShown: true }}
+              options={{ title: 'Home' }}
             />
             <Stack.Screen
               name="CreateAlbum"
