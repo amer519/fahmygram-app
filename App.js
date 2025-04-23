@@ -27,16 +27,23 @@ function AppContent() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
+          headerBackground: () => <GradientHeader />,
           headerTintColor: '#fff',
           headerTitleStyle: { fontWeight: 'bold' },
-          headerBackground: () => <GradientHeader />,
         }}
       >
         {firebaseUser ? (
           <>
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="CreateAlbum" component={CreateAlbumScreen} options={{ title: 'Create Album' }} />
-            <Stack.Screen name="PhotoDetail" component={PhotoDetailScreen} options={{ title: 'Photo' }} />
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CreateAlbum"
+              component={CreateAlbumScreen}
+              options={{ title: 'Create Album' }}
+            />
             <Stack.Screen
               name="AlbumFeed"
               component={AlbumFeedScreen}
@@ -44,11 +51,24 @@ function AppContent() {
                 title: route.params?.albumName || 'Album',
               })}
             />
+            <Stack.Screen
+              name="PhotoDetail"
+              component={PhotoDetailScreen}
+              options={{ title: 'Photo' }}
+            />
           </>
         ) : (
           <>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="SignUp"
+              component={SignUpScreen}
+              options={{ headerShown: false }}
+            />
           </>
         )}
       </Stack.Navigator>
