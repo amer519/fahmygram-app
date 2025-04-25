@@ -7,7 +7,8 @@ import {
     ScrollView,
     TouchableOpacity,
   } from 'react-native';
-  import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+  import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+  import { getFirestore, doc, getDoc } from 'firebase/firestore';
   import { app } from '../firebaseConfig';
   import { LinearGradient } from 'expo-linear-gradient';
   import { useState } from 'react';

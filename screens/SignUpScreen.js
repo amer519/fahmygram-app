@@ -21,14 +21,18 @@ import {
     const handleSignup = async () => {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        console.log('User signed up:', userCredential.user);
-        // navigation.replace('Home');
+        const user = userCredential.user;
+    
+        // After signup, immediately sign out
+        await signOut(auth);
+    
+        alert('Signup successful! Your account is pending approval. Please wait for an admin to approve your access.');
+        navigation.navigate('Login');
       } catch (err) {
-        console.log('Sign-up error:', err.message);
         alert(err.message);
       }
     };
-  
+    
     return (
       <KeyboardAvoidingView
         style={styles.container}
