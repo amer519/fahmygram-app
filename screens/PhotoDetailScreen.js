@@ -14,6 +14,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Dimensions,
+  Modal,
 } from 'react-native';
 import {
   getFirestore,
@@ -30,7 +31,6 @@ import {
 } from 'firebase/firestore';
 import { app } from '../firebaseConfig';
 import { useUser } from '../context/UserContext';
-import { Modal } from 'react-native';
 
 const db = getFirestore(app);
 const screenWidth = Dimensions.get('window').width;
@@ -49,7 +49,6 @@ export default function PhotoDetailScreen({ route }) {
   const tapTimeout = useRef(null);
   const [fullscreenVisible, setFullscreenVisible] = useState(false);
   const imageOpacity = useRef(new Animated.Value(0)).current;
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,50 +103,26 @@ export default function PhotoDetailScreen({ route }) {
     }
   };
 
-// UNCOMMENT THIS IF THINGS BREAK
-//   const handleDoubleTap = () => {
-//     const now = Date.now();
-//     if (lastTap.current && now - lastTap.current < 300) {
-//       clearTimeout(tapTimeout.current);
-//       toggleLike(); // double tap = like
-//     } else {
-//       lastTap.current = now;
-//       tapTimeout.current = setTimeout(() => {
-//         setFullscreenVisible(true);
-//         imageOpacity.setValue(0);
-//         Animated.timing(imageOpacity, {
-//         toValue: 1,
-//         duration: 300,
-//         useNativeDriver: true,
-//         }).start(); // single tap = open full screen
-//       }, 300);
-//     }
-//   };
-
-// DELETE THIS IS THINGS BREAK
-const handleDoubleTap = () => {
+  const handleDoubleTap = () => {
     const now = Date.now();
     if (lastTap.current && now - lastTap.current < 300) {
       clearTimeout(tapTimeout.current);
-      toggleLike(); // double tap = like
+      toggleLike();
     } else {
       lastTap.current = now;
-  
       tapTimeout.current = setTimeout(() => {
-        imageOpacity.setValue(0); // reset opacity
-        setFullscreenVisible(true); // make modal visible
-  
-        // Wait until next tick so modal is visible before animation
+        imageOpacity.setValue(0);
+        setFullscreenVisible(true);
         setTimeout(() => {
           Animated.timing(imageOpacity, {
             toValue: 1,
             duration: 300,
             useNativeDriver: true,
           }).start();
-        }, 50); // just enough to ensure modal has mounted
+        }, 50);
       }, 300);
     }
-  };  
+  };
 
   const handleCommentSubmit = async () => {
     if (!commentInput.trim()) return;
@@ -174,13 +149,13 @@ const handleDoubleTap = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}
-      >
-        <View style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
           <Pressable onPress={handleDoubleTap}>
             <Image source={{ uri: photoUrl }} style={styles.image} resizeMode="cover" />
           </Pressable>
@@ -206,39 +181,41 @@ const handleDoubleTap = () => {
               </View>
             )}
             contentContainerStyle={styles.commentList}
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps="always"
           />
-        </View>
 
-        <View style={styles.inputRow}>
-          <TextInput
-            value={commentInput}
-            onChangeText={setCommentInput}
-            placeholder="Add a comment..."
-            placeholderTextColor="#aaa"
-            style={styles.input}
-            returnKeyType="send"
-            blurOnSubmit={false}
-            onSubmitEditing={handleCommentSubmit}
-          />
-          <TouchableOpacity onPress={handleCommentSubmit}>
-            <Text style={styles.send}>Post</Text>
-          </TouchableOpacity>
-        </View>
-        <Modal visible={fullscreenVisible} transparent={true}>
-  <TouchableWithoutFeedback onPress={() => setFullscreenVisible(false)}>
-    <View style={styles.modalBackground}>
-      <Animated.Image
-        source={{ uri: photoUrl }}
-        style={[styles.fullscreenImage, { opacity: imageOpacity }]}
-        resizeMode="contain"
-      />
-    </View>
-  </TouchableWithoutFeedback>
-</Modal>
+          {/* Comment Input */}
+          <View style={styles.inputRow}>
+            <TextInput
+              value={commentInput}
+              onChangeText={setCommentInput}
+              placeholder="Add a comment..."
+              placeholderTextColor="#aaa"
+              style={styles.input}
+              returnKeyType="send"
+              blurOnSubmit={false}
+              onSubmitEditing={handleCommentSubmit}
+            />
+            <TouchableOpacity onPress={handleCommentSubmit}>
+              <Text style={styles.send}>Post</Text>
+            </TouchableOpacity>
+          </View>
 
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+          {/* Fullscreen Modal */}
+          <Modal visible={fullscreenVisible} transparent={true}>
+            <TouchableWithoutFeedback onPress={() => setFullscreenVisible(false)}>
+              <View style={styles.modalBackground}>
+                <Animated.Image
+                  source={{ uri: photoUrl }}
+                  style={[styles.fullscreenImage, { opacity: imageOpacity }]}
+                  resizeMode="contain"
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -320,5 +297,4 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  
 });
