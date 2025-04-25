@@ -163,7 +163,11 @@ export default function PhotoDetailScreen({ route }) {
             <View style={styles.actionRow}>
               <TouchableOpacity onPress={toggleLike}>
                 <Animated.Text
-                  style={[styles.icon, liked && styles.liked, { transform: [{ scale: heartScale }] }]}
+                  style={[
+                    styles.icon,
+                    liked && styles.liked,
+                    { transform: [{ scale: heartScale }] },
+                  ]}
                 >
                   {liked ? '❤️' : '🤍'} {likeCount}
                 </Animated.Text>
@@ -200,34 +204,23 @@ export default function PhotoDetailScreen({ route }) {
               </TouchableOpacity>
             </View>
           </View>
-  
-          <Modal visible={fullscreenVisible} transparent={true}>
-            <TouchableWithoutFeedback onPress={() => setFullscreenVisible(false)}>
-              <View style={styles.modalBackground}>
-                <Animated.Image
-                  source={{ uri: photoUrl }}
-                  style={[styles.fullscreenImage, { opacity: imageOpacity }]}
-                  resizeMode="contain"
-                />
-              </View>
-            </TouchableWithoutFeedback>
-          </Modal>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
+  
+      {/* Fullscreen modal placed outside of KeyboardAvoidingView */}
+      <Modal visible={fullscreenVisible} transparent={true}>
+        <TouchableWithoutFeedback onPress={() => setFullscreenVisible(false)}>
+          <View style={styles.modalBackground}>
+            <Animated.Image
+              source={{ uri: photoUrl }}
+              style={[styles.fullscreenImage, { opacity: imageOpacity }]}
+              resizeMode="contain"
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );  
-
-      <Modal visible={fullscreenVisible} transparent={true}>
-        <TouchableOpacity onPress={() => setFullscreenVisible(false)} style={styles.modalBackground}>
-          <Animated.Image
-            source={{ uri: photoUrl }}
-            style={[styles.fullscreenImage, { opacity: imageOpacity }]}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-      </Modal>
-    </KeyboardAvoidingView>
-  );
 }
 
 const styles = StyleSheet.create({
