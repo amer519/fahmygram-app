@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
   } from 'react-native';
   import { useState } from 'react';
-  import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+  import { getAuth, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
   import { app } from '../firebaseConfig';
   import { LinearGradient } from 'expo-linear-gradient';
   import AuthForm from '../components/AuthForm';
