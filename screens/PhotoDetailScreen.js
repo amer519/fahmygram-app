@@ -13,6 +13,7 @@ import {
   Animated,
   Keyboard,
   Dimensions,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {
   getFirestore,
@@ -148,33 +149,29 @@ export default function PhotoDetailScreen({ route }) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={{ flex: 1 }}>
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
+          style={styles.container}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
         >
           <View style={{ flex: 1 }}>
             <Pressable onPress={handleDoubleTap}>
               <Image source={{ uri: photoUrl }} style={styles.image} resizeMode="cover" />
             </Pressable>
-  
+
             <View style={styles.actionRow}>
               <TouchableOpacity onPress={toggleLike}>
                 <Animated.Text
-                  style={[
-                    styles.icon,
-                    liked && styles.liked,
-                    { transform: [{ scale: heartScale }] },
-                  ]}
+                  style={[styles.icon, liked && styles.liked, { transform: [{ scale: heartScale }] }]}
                 >
                   {liked ? '❤️' : '🤍'} {likeCount}
                 </Animated.Text>
               </TouchableOpacity>
               <Text style={styles.icon}>💬 {comments.length}</Text>
             </View>
-  
+
             <FlatList
               data={comments}
               keyExtractor={(item) => item.id}
@@ -187,7 +184,7 @@ export default function PhotoDetailScreen({ route }) {
               contentContainerStyle={styles.commentList}
               keyboardShouldPersistTaps="handled"
             />
-  
+
             <View style={styles.inputRow}>
               <TextInput
                 value={commentInput}
@@ -205,22 +202,19 @@ export default function PhotoDetailScreen({ route }) {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
-  
-      {/* Fullscreen modal placed outside of KeyboardAvoidingView */}
-      <Modal visible={fullscreenVisible} transparent={true}>
-        <TouchableWithoutFeedback onPress={() => setFullscreenVisible(false)}>
-          <View style={styles.modalBackground}>
+
+        <Modal visible={fullscreenVisible} transparent={true}>
+          <TouchableOpacity onPress={() => setFullscreenVisible(false)} style={styles.modalBackground}>
             <Animated.Image
               source={{ uri: photoUrl }}
               style={[styles.fullscreenImage, { opacity: imageOpacity }]}
               resizeMode="contain"
             />
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </View>
-  );  
+          </TouchableOpacity>
+        </Modal>
+      </View>
+    </TouchableWithoutFeedback>
+  );
 }
 
 const styles = StyleSheet.create({
