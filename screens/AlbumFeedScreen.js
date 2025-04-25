@@ -11,18 +11,16 @@ import {
   Platform,
 } from 'react-native';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import { app } from '../firebaseConfig';
 import { useUser } from '../context/UserContext';
-import { LinearGradient } from 'expo-linear-gradient';
 
 const screenWidth = Dimensions.get('window').width;
 const db = getFirestore(app);
 
-export default function AlbumFeedScreen({ route }) {
+export default function AlbumFeedScreen({ route, navigation }) {
   const { albumId, albumName } = route.params;
   const { firebaseUser } = useUser();
-  const navigation = useNavigation();
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,13 +44,6 @@ export default function AlbumFeedScreen({ route }) {
       fetchPhotos();
     }, [albumId])
   );
-
-  const handleLogout = () => {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
-  };
 
   const renderPhoto = ({ item }) => {
     const userLiked = item.likedBy.includes(firebaseUser?.uid);
@@ -85,23 +76,13 @@ export default function AlbumFeedScreen({ route }) {
   return (
     <View style={styles.container}>
       <View style={styles.headerWrapper}>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <LinearGradient
-            colors={['#feda75', '#fa7e1e', '#d62976', '#962fbf', '#4f5bd5']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.gradientButton}
-          >
-            <Text style={styles.logoutText}>Logout</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+  <Text style={styles.albumTitle}>{albumName}</Text>
+  <View style={{ height: 3, backgroundColor: '#F58529', width: 50, borderRadius: 2, marginTop: 6 }} />
 
-        <Text style={styles.albumTitle}>{albumName}</Text>
-        <View style={styles.underline} />
-      </View>
+</View>
 
       {loading ? (
-        <ActivityIndicator size="large" style={{ marginTop: 50 }} />
+        <ActivityIndicator size="large" />
       ) : (
         <FlatList
           data={photos}
@@ -119,46 +100,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f9f9f9',
+    paddingTop: 10,
   },
-  headerWrapper: {
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 16,
-    paddingHorizontal: 20,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    alignItems: 'center',
-  },
-  logoutButton: {
-    alignSelf: 'flex-end',
-    marginBottom: 10,
-  },
-  gradientButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-  },
-  logoutText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
     textAlign: 'center',
-  },
-  albumTitle: {
-    fontSize: 26,
-    fontWeight: '800',
-    letterSpacing: 0.8,
-    color: '#1c1c1e',
-    textTransform: 'capitalize',
-    fontFamily: Platform.select({ ios: 'Helvetica Neue', android: 'Roboto' }),
-    marginTop: 4,
-  },
-  underline: {
-    height: 3,
-    backgroundColor: '#F58529',
-    width: 50,
-    borderRadius: 2,
-    marginTop: 8,
+    marginBottom: 10,
+    color: '#333',
   },
   imageWrapper: {
     backgroundColor: '#fff',
@@ -191,4 +140,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  headerWrapper: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    alignItems: 'center',
+  },
+  
+  albumTitle: {
+    fontSize: 26,
+  fontWeight: '800',
+  letterSpacing: 0.8,
+  color: '#1c1c1e',
+  textTransform: 'capitalize',
+  fontFamily: Platform.select({ ios: 'Helvetica Neue', android: 'Roboto' }),
+  },  
 });

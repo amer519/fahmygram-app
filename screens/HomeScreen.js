@@ -2,15 +2,16 @@ import { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  Button,
   FlatList,
   Image,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { getAuth, signOut } from 'firebase/auth';
+import { LinearGradient } from 'expo-linear-gradient';
 import { app } from '../firebaseConfig';
 import { useUser } from '../context/UserContext';
 
@@ -64,10 +65,12 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>📸 Photo Albums</Text>
+      <Text style={styles.header}>📸 Your Photo Albums</Text>
 
       {profile?.role === 'admin' && (
-        <Button title="📁 Create New Album" onPress={() => navigation.navigate('CreateAlbum')} />
+        <TouchableOpacity style={styles.createButton} onPress={() => navigation.navigate('CreateAlbum')}>
+          <Text style={styles.createButtonText}>+ Create New Album</Text>
+        </TouchableOpacity>
       )}
 
       {loading ? (
@@ -85,16 +88,29 @@ export default function HomeScreen({ navigation }) {
         </View>
       )}
 
-      <View style={{ marginTop: 20 }}>
-        <Button title="Logout" onPress={() => signOut(auth)} />
-      </View>
+      <TouchableOpacity onPress={() => signOut(auth)} style={styles.logoutWrapper}>
+        <LinearGradient
+          colors={['#feda75', '#fa7e1e', '#d62976', '#962fbf', '#4f5bd5']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.logoutButton}
+        >
+          <Text style={styles.logoutText}>Logout</Text>
+        </LinearGradient>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingTop: 50, paddingHorizontal: 20, backgroundColor: '#f6f6f6' },
-  header: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
+  container: { flex: 1, paddingTop: 60, paddingHorizontal: 20, backgroundColor: '#f6f6f6' },
+  header: {
+    fontSize: 26,
+    fontWeight: '700',
+    marginBottom: 20,
+    color: '#222',
+    fontFamily: Platform.select({ ios: 'Helvetica Neue', android: 'Roboto' }),
+  },
   carousel: { paddingBottom: 20 },
   card: {
     width: 150,
@@ -125,5 +141,37 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 14,
     fontWeight: '600',
+    color: '#1c1c1e',
+  },
+  logoutWrapper: {
+    marginTop: 30,
+    alignSelf: 'center',
+    width: '100%',
+  },
+  logoutButton: {
+    paddingVertical: 14,
+    borderRadius: 30,
+    alignItems: 'center',
+    width: '100%',
+  },
+  logoutText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  createButton: {
+    backgroundColor: '#fff',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignSelf: 'flex-start',
+    marginBottom: 20,
+    borderColor: '#ccc',
+    borderWidth: 1,
+  },
+  createButtonText: {
+    fontWeight: '600',
+    color: '#555',
   },
 });
