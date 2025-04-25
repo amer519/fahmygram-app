@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+\import { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Platform,
+  Animated,
 } from 'react-native';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { getAuth, signOut } from 'firebase/auth';
@@ -24,6 +25,9 @@ export default function HomeScreen({ navigation }) {
   const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [headerText, setHeaderText] = useState('Exploring memories...');
+  const fadeAnim = useState(new Animated.Value(1))[0];
+
   useEffect(() => {
     const fetchAlbums = async () => {
       const albumSnap = await getDocs(collection(db, 'albums'));
@@ -36,6 +40,30 @@ export default function HomeScreen({ navigation }) {
     };
 
     fetchAlbums();
+  }, []);
+
+  useEffect(() => {
+    const messages = ['Exploring memories...', 'Your photo albums await'];
+    let index = 0;
+
+    const interval = setInterval(() => {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => {
+        index = (index + 1) % messages.length;
+        setHeaderText(messages[index]);
+
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }).start();
+      });
+    }, 4000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const renderAlbum = ({ item }) => (
@@ -65,7 +93,11 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>📸 Your Photo Albums</Text>
+      <View style={styles.headerContainer}>
+        <Animated.Text style={[styles.header, { opacity: fadeAnim }]}>
+          {headerText}
+        </Animated.Text>
+      </View>
 
       {profile?.role === 'admin' && (
         <TouchableOpacity style={styles.createButton} onPress={() => navigation.navigate('CreateAlbum')}>
@@ -104,10 +136,15 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 60, paddingHorizontal: 20, backgroundColor: '#f6f6f6' },
+  headerContainer: {
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   header: {
     fontSize: 26,
     fontWeight: '700',
-    marginBottom: 20,
     color: '#222',
     fontFamily: Platform.select({ ios: 'Helvetica Neue', android: 'Roboto' }),
   },
