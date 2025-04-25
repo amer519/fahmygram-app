@@ -15,6 +15,7 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
   Modal,
+  ScrollView,
 } from 'react-native';
 import {
   getFirestore,
@@ -156,35 +157,44 @@ export default function PhotoDetailScreen({ route }) {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-          <Pressable onPress={handleDoubleTap}>
-            <Image source={{ uri: photoUrl }} style={styles.image} resizeMode="cover" />
-          </Pressable>
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            <Pressable onPress={handleDoubleTap}>
+              <Image source={{ uri: photoUrl }} style={styles.image} resizeMode="cover" />
+            </Pressable>
 
-          <View style={styles.actionRow}>
-            <TouchableOpacity onPress={toggleLike}>
-              <Animated.Text
-                style={[styles.icon, liked && styles.liked, { transform: [{ scale: heartScale }] }]}
-              >
-                {liked ? '❤️' : '🤍'} {likeCount}
-              </Animated.Text>
-            </TouchableOpacity>
-            <Text style={styles.icon}>💬 {comments.length}</Text>
-          </View>
+            <View style={styles.actionRow}>
+              <TouchableOpacity onPress={toggleLike}>
+                <Animated.Text
+                  style={[
+                    styles.icon,
+                    liked && styles.liked,
+                    { transform: [{ scale: heartScale }] },
+                  ]}
+                >
+                  {liked ? '❤️' : '🤍'} {likeCount}
+                </Animated.Text>
+              </TouchableOpacity>
+              <Text style={styles.icon}>💬 {comments.length}</Text>
+            </View>
 
-          <FlatList
-            data={comments}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.commentBubble}>
-                <Text style={styles.commentUser}>{item.email}</Text>
-                <Text style={styles.commentText}>{item.text}</Text>
-              </View>
-            )}
-            contentContainerStyle={styles.commentList}
-            keyboardShouldPersistTaps="always"
-          />
+            <FlatList
+              data={comments}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.commentBubble}>
+                  <Text style={styles.commentUser}>{item.email}</Text>
+                  <Text style={styles.commentText}>{item.text}</Text>
+                </View>
+              )}
+              contentContainerStyle={styles.commentList}
+              scrollEnabled={false}
+              keyboardShouldPersistTaps="handled"
+            />
+          </ScrollView>
 
-          {/* Comment Input */}
           <View style={styles.inputRow}>
             <TextInput
               value={commentInput}
@@ -193,15 +203,14 @@ export default function PhotoDetailScreen({ route }) {
               placeholderTextColor="#aaa"
               style={styles.input}
               returnKeyType="send"
-              blurOnSubmit={false}
               onSubmitEditing={handleCommentSubmit}
+              blurOnSubmit={false}
             />
             <TouchableOpacity onPress={handleCommentSubmit}>
               <Text style={styles.send}>Post</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Fullscreen Modal */}
           <Modal visible={fullscreenVisible} transparent={true}>
             <TouchableWithoutFeedback onPress={() => setFullscreenVisible(false)}>
               <View style={styles.modalBackground}>
@@ -243,7 +252,7 @@ const styles = StyleSheet.create({
   },
   commentList: {
     paddingHorizontal: 16,
-    paddingBottom: 80,
+    paddingBottom: 20,
   },
   commentBubble: {
     backgroundColor: '#fff',
