@@ -87,7 +87,11 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.placeholderText}>No Cover</Text>
         </View>
       )}
-      <Text style={styles.albumName} numberOfLines={1}>{item.name}</Text>
+      <View style={styles.albumNameWrapper}>
+        <Text style={styles.albumName} numberOfLines={1}>
+          {item.name}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 
@@ -108,7 +112,7 @@ export default function HomeScreen({ navigation }) {
       {loading ? (
         <ActivityIndicator style={{ marginTop: 20 }} size="large" />
       ) : (
-        <View style={{ height: 180 }}>
+        <View style={{ height: 300 }}>
           <FlatList
             horizontal
             data={albums}
@@ -150,20 +154,21 @@ const styles = StyleSheet.create({
   },
   carousel: { paddingBottom: 20 },
   card: {
-    width: 150,
+    width: 160,
+    height: 260, // Taller TikTok-style card
     marginRight: 16,
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: 'hidden',
-    elevation: 2,
+    elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
-    shadowRadius: 4,
+    shadowRadius: 6,
   },
   cover: {
     width: '100%',
-    height: 100,
+    height: '80%',
     backgroundColor: '#eee',
   },
   placeholder: {
@@ -174,11 +179,19 @@ const styles = StyleSheet.create({
     color: '#999',
     fontSize: 14,
   },
+  albumNameWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+  },
   albumName: {
-    padding: 10,
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
     color: '#1c1c1e',
+    textAlign: 'center',
+    fontFamily: Platform.select({ ios: 'Helvetica Neue', android: 'Roboto' }),
   },
   logoutWrapper: {
     marginTop: 30,
