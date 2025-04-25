@@ -148,56 +148,74 @@ export default function PhotoDetailScreen({ route }) {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
-      <View style={{ flex: 1 }}>
-        <Pressable onPress={handleDoubleTap}>
-          <Image source={{ uri: photoUrl }} style={styles.image} resizeMode="cover" />
-        </Pressable>
-
-        <View style={styles.actionRow}>
-          <TouchableOpacity onPress={toggleLike}>
-            <Animated.Text
-              style={[styles.icon, liked && styles.liked, { transform: [{ scale: heartScale }] }]}
-            >
-              {liked ? '❤️' : '🤍'} {likeCount}
-            </Animated.Text>
-          </TouchableOpacity>
-          <Text style={styles.icon}>💬 {comments.length}</Text>
-        </View>
-
-        <FlatList
-          data={comments}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.commentBubble}>
-              <Text style={styles.commentUser}>{item.email}</Text>
-              <Text style={styles.commentText}>{item.text}</Text>
+    <View style={{ flex: 1 }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}
+        >
+          <View style={{ flex: 1 }}>
+            <Pressable onPress={handleDoubleTap}>
+              <Image source={{ uri: photoUrl }} style={styles.image} resizeMode="cover" />
+            </Pressable>
+  
+            <View style={styles.actionRow}>
+              <TouchableOpacity onPress={toggleLike}>
+                <Animated.Text
+                  style={[styles.icon, liked && styles.liked, { transform: [{ scale: heartScale }] }]}
+                >
+                  {liked ? '❤️' : '🤍'} {likeCount}
+                </Animated.Text>
+              </TouchableOpacity>
+              <Text style={styles.icon}>💬 {comments.length}</Text>
             </View>
-          )}
-          contentContainerStyle={styles.commentList}
-          keyboardShouldPersistTaps="handled"
-        />
-
-        <View style={styles.inputRow}>
-          <TextInput
-            value={commentInput}
-            onChangeText={setCommentInput}
-            placeholder="Add a comment..."
-            placeholderTextColor="#aaa"
-            style={styles.input}
-            returnKeyType="send"
-            blurOnSubmit={false}
-            onSubmitEditing={handleCommentSubmit}
-          />
-          <TouchableOpacity onPress={handleCommentSubmit}>
-            <Text style={styles.send}>Post</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+  
+            <FlatList
+              data={comments}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.commentBubble}>
+                  <Text style={styles.commentUser}>{item.email}</Text>
+                  <Text style={styles.commentText}>{item.text}</Text>
+                </View>
+              )}
+              contentContainerStyle={styles.commentList}
+              keyboardShouldPersistTaps="handled"
+            />
+  
+            <View style={styles.inputRow}>
+              <TextInput
+                value={commentInput}
+                onChangeText={setCommentInput}
+                placeholder="Add a comment..."
+                placeholderTextColor="#aaa"
+                style={styles.input}
+                returnKeyType="send"
+                blurOnSubmit={false}
+                onSubmitEditing={handleCommentSubmit}
+              />
+              <TouchableOpacity onPress={handleCommentSubmit}>
+                <Text style={styles.send}>Post</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+  
+          <Modal visible={fullscreenVisible} transparent={true}>
+            <TouchableWithoutFeedback onPress={() => setFullscreenVisible(false)}>
+              <View style={styles.modalBackground}>
+                <Animated.Image
+                  source={{ uri: photoUrl }}
+                  style={[styles.fullscreenImage, { opacity: imageOpacity }]}
+                  resizeMode="contain"
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </View>
+  );  
 
       <Modal visible={fullscreenVisible} transparent={true}>
         <TouchableOpacity onPress={() => setFullscreenVisible(false)} style={styles.modalBackground}>
