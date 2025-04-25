@@ -149,72 +149,74 @@ export default function PhotoDetailScreen({ route }) {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={{ flex: 1 }}>
-        <KeyboardAvoidingView
-          style={styles.container}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
-        >
-          <View style={{ flex: 1 }}>
-            <Pressable onPress={handleDoubleTap}>
-              <Image source={{ uri: photoUrl }} style={styles.image} resizeMode="cover" />
-            </Pressable>
-
-            <View style={styles.actionRow}>
-              <TouchableOpacity onPress={toggleLike}>
-                <Animated.Text
-                  style={[styles.icon, liked && styles.liked, { transform: [{ scale: heartScale }] }]}
-                >
-                  {liked ? '❤️' : '🤍'} {likeCount}
-                </Animated.Text>
-              </TouchableOpacity>
-              <Text style={styles.icon}>💬 {comments.length}</Text>
-            </View>
-
-            <FlatList
-              data={comments}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View style={styles.commentBubble}>
-                  <Text style={styles.commentUser}>{item.email}</Text>
-                  <Text style={styles.commentText}>{item.text}</Text>
-                </View>
-              )}
-              contentContainerStyle={styles.commentList}
-              keyboardShouldPersistTaps="handled"
-            />
-
-            <View style={styles.inputRow}>
-              <TextInput
-                value={commentInput}
-                onChangeText={setCommentInput}
-                placeholder="Add a comment..."
-                placeholderTextColor="#aaa"
-                style={styles.input}
-                returnKeyType="send"
-                blurOnSubmit={false}
-                onSubmitEditing={handleCommentSubmit}
-              />
-              <TouchableOpacity onPress={handleCommentSubmit}>
-                <Text style={styles.send}>Post</Text>
-              </TouchableOpacity>
-            </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ flex: 1 }}>
+          <Pressable onPress={handleDoubleTap}>
+            <Image source={{ uri: photoUrl }} style={styles.image} resizeMode="cover" />
+          </Pressable>
+  
+          <View style={styles.actionRow}>
+            <TouchableOpacity onPress={toggleLike}>
+              <Animated.Text
+                style={[styles.icon, liked && styles.liked, { transform: [{ scale: heartScale }] }]}
+              >
+                {liked ? '❤️' : '🤍'} {likeCount}
+              </Animated.Text>
+            </TouchableOpacity>
+            <Text style={styles.icon}>💬 {comments.length}</Text>
           </View>
-        </KeyboardAvoidingView>
-
-        <Modal visible={fullscreenVisible} transparent={true}>
-          <TouchableOpacity onPress={() => setFullscreenVisible(false)} style={styles.modalBackground}>
-            <Animated.Image
-              source={{ uri: photoUrl }}
-              style={[styles.fullscreenImage, { opacity: imageOpacity }]}
-              resizeMode="contain"
+  
+          <FlatList
+            data={comments}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.commentBubble}>
+                <Text style={styles.commentUser}>{item.email}</Text>
+                <Text style={styles.commentText}>{item.text}</Text>
+              </View>
+            )}
+            contentContainerStyle={styles.commentList}
+            keyboardShouldPersistTaps="handled"
+          />
+  
+          <View style={styles.inputRow}>
+            <TextInput
+              value={commentInput}
+              onChangeText={setCommentInput}
+              placeholder="Add a comment..."
+              placeholderTextColor="#aaa"
+              style={styles.input}
+              returnKeyType="send"
+              blurOnSubmit={false}
+              onSubmitEditing={handleCommentSubmit}
             />
-          </TouchableOpacity>
-        </Modal>
-      </View>
-    </TouchableWithoutFeedback>
-  );
+            <TouchableOpacity onPress={handleCommentSubmit}>
+              <Text style={styles.send}>Post</Text>
+            </TouchableOpacity>
+          </View>
+  
+          {/* Fullscreen modal for the image */}
+          <Modal visible={fullscreenVisible} transparent={true}>
+            <TouchableOpacity
+              onPress={() => setFullscreenVisible(false)}
+              style={styles.modalBackground}
+            >
+              <Animated.Image
+                source={{ uri: photoUrl }}
+                style={[styles.fullscreenImage, { opacity: imageOpacity }]}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          </Modal>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+  );  
 }
 
 const styles = StyleSheet.create({
