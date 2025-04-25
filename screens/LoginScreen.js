@@ -20,11 +20,24 @@ import {
   
     const handleLogin = async () => {
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+    
+        const db = getFirestore(app);
+        const approvedRef = doc(db, 'approvedUsers', user.email);
+        const approvedSnap = await getDoc(approvedRef);
+    
+        if (approvedSnap.exists()) {
+          // ✅ User is approved, continue normally
+        } else {
+          // ⛔️ User not approved: Sign them out and show message
+          await signOut(auth);
+          alert('Your account is pending approval. Please contact the admin.');
+        }
       } catch (err) {
         alert(err.message);
       }
-    };
+    };    
   
     return (
       <KeyboardAvoidingView
